@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+        http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+
+    <changeSet author="sefianiY" id="001-update-schema-1">
+        <createSequence incrementBy="50" sequenceName="clients_seq" startValue="1"/>
+    </changeSet>
+    <changeSet author="sefianiY" id="001-update-schema-2">
+        <createSequence incrementBy="50" sequenceName="groups_seq" startValue="1"/>
+    </changeSet>
+    <changeSet author="sefianiY" id="001-update-schema-3">
+        <createTable tableName="clients">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="clientsPK"/>
+            </column>
+            <column name="birth_date" type="date"/>
+            <column name="email" type="VARCHAR(100)"/>
+            <column name="gender" type="VARCHAR(60)"/>
+            <column name="name" type="VARCHAR(100)"/>
+            <column name="password" type="VARCHAR(255)"/>
+            <column name="profession" type="VARCHAR(120)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sefianiY" id="001-update-schema-4">
+        <createTable tableName="contacts">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="contactsPK"/>
+            </column>
+            <column name="num_phone" type="VARCHAR(255)"/>
+            <column name="skype" type="VARCHAR(255)"/>
+            <column name="client_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sefianiY" id="001-update-schema-5">
+        <createTable tableName="group_client">
+            <column name="student_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="group_clientPK"/>
+            </column>
+            <column name="group_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="group_clientPK"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="sefianiY" id="001-update-schema-6">
+        <createTable tableName="groups">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="groupsPK"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="num_phone" type="VARCHAR(255)"/>
+            <column name="skype" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="sefianiY" id="001-update-schema-7">
+        <addForeignKeyConstraint baseColumnNames="client_id" baseTableName="contacts" constraintName="FK94mnsowcdm8tow68ha3xudt48" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="clients" validate="true"/>
+    </changeSet>
+    <changeSet author="sefianiY" id="001-update-schema-8">
+        <addForeignKeyConstraint baseColumnNames="student_id" baseTableName="group_client" constraintName="FKjsg2ys370yefy9ae3bc5huiwn" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="clients" validate="true"/>
+    </changeSet>
+    <changeSet author="sefianiY" id="001-update-schema-9">
+        <addForeignKeyConstraint baseColumnNames="group_id" baseTableName="group_client" constraintName="FKpnpeiakmuetf534mog7ghc9pl" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="groups" validate="true"/>
+    </changeSet>
+
+</databaseChangeLog>
