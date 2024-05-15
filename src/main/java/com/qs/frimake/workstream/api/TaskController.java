@@ -22,29 +22,33 @@ public class TaskController {
 
     private final TaskService taskService;
 
-
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public DetailsTaskDto createTask(@RequestBody TaskDto taskDto) {
+    public DetailsTaskDto create(@RequestBody TaskDto taskDto) {
         return taskService.createTask(taskDto);
     }
-
 
     @PutMapping("/{id}")
     public DetailsTaskDto update(@PathVariable Long id, @Valid @RequestBody TaskDto task) {
         return taskService.updateTask(id, task);
     }
 
+    @PutMapping("/{id}/cancel")
+    @ResponseStatus(HttpStatus.OK)
+    public Task cancel(@PathVariable Long id, @RequestBody String responsible, @RequestBody(required = false) String comment) {
+        return taskService.cancelTask(id, comment, responsible);
+    }
 
     @PutMapping("/{id}/cancel")
-    public Task cancel(@PathVariable Long id, @RequestBody String comment) {
-        return taskService.cancelTask(id, comment);
+    @ResponseStatus(HttpStatus.OK)
+    public Task complete(@PathVariable Long id, @RequestBody String responsible, @RequestBody(required = false) String comment) {
+        return taskService.completeTask(id, comment, responsible);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void remove(@PathVariable Long id) {
-
+    public void remove(@PathVariable Long id, @RequestBody(required = false) String comment) {
+        taskService.deleteTask(id,comment);
     }
 }
 

@@ -31,48 +31,69 @@ public class TaskService {
         Task saveTask = taskRepository.save(task);
         return taskMapper.toDto(saveTask);
     }
-    
 
-    public DetailsTaskDto updateTask(Long id, TaskDto task) {
-        // Validation and business logic
+
+    public DetailsTaskDto updateTask(Long id, TaskDto taskDto) {
         Task existingTask = taskRepository.findById(id).orElseThrow(
                 () -> new RuntimeException("Task not found"));
 
+        // Check if responsible or moderation can update the task
+        if (!existingTask.getResponsible().equals(taskDto.getResponsible())
+                && !existingTask.isModerationTask()) {
+            throw new RuntimeException("You are not authorized to update this task");
+        }
         // update table Task
         Task updatedTask = existingTask.toBuilder()
-                .summary(task.getSummary())
-                .description(task.getDescription())
-                .type(task.getType())
-                .responsible(task.getResponsible())
-                .dueDate(task.getDueDate())
+                .summary(taskDto.getSummary())
+                .description(taskDto.getDescription())
+                .type(taskDto.getType())
+                .responsible(taskDto.getResponsible())
+                .dueDate(taskDto.getDueDate())
                 .build();
 
         updatedTask = taskRepository.save(updatedTask);
         return taskMapper.toDto(updatedTask);
     }
 
-    public Task cancelTask(Long id, String comment) {
-        Task task = taskRepository.findById(id)
+    public Task cancelTask(Long id, String comment, String responsible) {
+        Task existingTask = taskRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Task not found for this id :: " + id));
-        task.setStatus(Task.TaskStatus.CANCELLED);
-        task.setComment(comment);
-        task.setProcessDate(new Date());
-        return taskRepository.save(task);
+
+        // Check if responsible or moderation can update the task
+        if (!existingTask.getResponsible().equals(responsible)
+                && !existingTask.isModerationTask()) {
+            throw new RuntimeException("You are not authorized to cancel this task");
+        }
+
+        existingTask.setStatus(Task.TaskStatus.CANCELLED);
+        existingTask.setComment(comment);
+        // Date to cancel
+        existingTask.setProcessDate(new Date());
+        return taskRepository.save(existingTask);
     }
 
-    public Task completeTask(Long id, String comment) {
-        Task task = taskRepository.findById(id)
+    public Task completeTask(Long id, String comment, String responsible) {
+        Task existingTask = taskRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Task not found for this id :: " + id));
-        task.setStatus(Task.TaskStatus.DONE);
-        task.setComment(comment);
-        task.setProcessDate(new Date());
-        return taskRepository.save(task);
+
+        // Check if responsible or moderation can update the task
+        if (!existingTask.getResponsible().equals(responsible)
+                && !existingTask.isModerationTask()) {
+            throw new RuntimeException("You are not authorized to cancel this task");
+        }
+
+        existingTask.setStatus(Task.TaskStatus.DONE);
+        existingTask.setComment(comment);
+        existingTask.setProcessDate(new Date());
+
+        return taskRepository.save(existingTask);
     }
 
-    public void deleteTask(Long id) {
-        Task task = taskRepository.findById(id)
+    public void deleteTask(Long id, String comment) {
+        Task existingTask = taskRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Task not found for this id :: " + id));
-        taskRepository.delete(task);
+        existingTask.setComment(comment);
+        taskRepository.delete(existingTask);
     }
 
     public Page<Task> listTasks(Pageable pageable, String responsible, Task.TaskStatus status, Date dueDate) {

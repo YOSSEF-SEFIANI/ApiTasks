@@ -31,3 +31,5 @@ build/
 
 ### VS Code ###
 .vscode/
+# Explicitly include the specific package
+!src/main/java/net/youss/fontendreactclient/
